@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buku Tamu — UT Bandung</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue:        #0056D2;
+    --blue-light:  #1D6DDC;
+    --blue-dark:   #003E99;
+    --orange:      #FF9D1B;
+    --orange-dark: #E07E00;
+    --orange-light:#FFD08A;
+    --white:       #F9F9F9;
+    --surface:     #FFFFFF;
+    --surface2:    #EEF4FF;
+    --border:      #D0DFEE;
+    --text:        #0D1A2E;
+    --text-muted:  #5A7399;
+    --success:     #1A7F4B;
+    --success-bg:  #E8F8EF;
+    --success-border:#A8D5BC;
+    --danger:      #C0392B;
+    --danger-bg:   #FDECEA;
+    --danger-border:#F1A8A0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--white);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 40% at 50% -5%, rgba(0,86,210,0.07) 0%, transparent 65%),
+      radial-gradient(ellipse 40% 35% at 95% 95%, rgba(255,157,27,0.08) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .container { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  /* ── HEADER ── */
+  .header { text-align: center; margin-bottom: 32px; animation: fadeDown 0.7s ease both; }
+  .header-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--blue); border: 1.5px solid rgba(0,86,210,0.25);
+    padding: 6px 18px; border-radius: 100px; margin-bottom: 20px;
+    background: rgba(0,86,210,0.05); font-weight: 600;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 5vw, 44px); font-weight: 900;
+    line-height: 1.1; letter-spacing: -0.5px;
+    color: var(--blue); margin-bottom: 10px;
+  }
+  h1 span { color: var(--orange); }
+  .header-sub { color: var(--text-muted); font-size: 14.5px; line-height: 1.6; }
+  .divider {
+    width: 56px; height: 3px;
+    background: linear-gradient(90deg, var(--blue), var(--orange));
+    margin: 18px auto 0; border-radius: 100px;
+  }
+
+  /* ── TANGGAL REALTIME ── */
+  .date-banner {
+    background: linear-gradient(135deg, rgba(0,86,210,0.06), rgba(255,157,27,0.05));
+    border: 1.5px solid rgba(0,86,210,0.15);
+    border-radius: 14px; padding: 14px 20px;
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 14px;
+    animation: fadeDown 0.7s ease 0.05s both;
+  }
+  .date-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--surface); border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .date-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 3px; }
+  .date-val { font-size: 15px; font-weight: 700; color: var(--text); }
+  .date-time { font-size: 12.5px; color: var(--text-muted); margin-top: 1px; font-family: 'DM Mono', monospace; }
+
+  /* ── INFO CARD ── */
+  .info-card {
+    background: var(--surface2); border: 1.5px solid rgba(0,86,210,0.15);
+    border-radius: 14px; padding: 14px 18px; margin-bottom: 24px;
+    display: flex; gap: 12px; align-items: flex-start;
+    animation: fadeDown 0.7s ease 0.08s both;
+  }
+  .info-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .info-text { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+  .info-text strong { color: var(--text); font-weight: 600; }
+
+  /* ── PROGRESS ── */
+  .form-progress {
+    margin-bottom: 20px;
+    animation: fadeDown 0.7s ease 0.1s both;
+  }
+  .form-progress-header { display: flex; justify-content: space-between; margin-bottom: 7px; }
+  .form-progress-label { font-size: 12px; color: var(--text-muted); }
+  .form-progress-count { font-size: 12px; color: var(--blue); font-weight: 700; }
+  .form-progress-bar { height: 4px; background: var(--border); border-radius: 100px; overflow: hidden; }
+  .form-progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--orange)); border-radius: 100px; transition: width 0.4s ease; width: 0%; }
+
+  /* ── FORM CARDS ── */
+  .form-section { display: flex; flex-direction: column; gap: 14px; animation: fadeDown 0.7s ease 0.12s both; }
+
+  .form-card {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 16px; padding: 20px 22px;
+    position: relative; overflow: hidden;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .form-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: linear-gradient(180deg, var(--blue), var(--blue-light));
+    opacity: 0; transition: opacity 0.3s; border-radius: 4px 0 0 4px;
+  }
+  .form-card.focused { border-color: rgba(0,86,210,0.3); box-shadow: 0 4px 20px rgba(0,86,210,0.07); }
+  .form-card.focused::before { opacity: 1; }
+  .form-card.filled { border-color: rgba(0,86,210,0.2); }
+  .form-card.filled::before { opacity: 0.5; }
+  .form-card.error { border-color: rgba(192,57,43,0.4); box-shadow: 0 4px 16px rgba(192,57,43,0.06); }
+  .form-card.error::before { background: var(--danger); opacity: 1; }
+
+  /* Detail card slide animation */
+  .form-card.detail-card {
+    overflow: hidden;
+    max-height: 0; padding-top: 0; padding-bottom: 0;
+    border-width: 0; margin-top: -14px;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease, border-width 0.3s ease, margin-top 0.3s ease;
+  }
+  .form-card.detail-card.visible {
+    max-height: 200px; padding-top: 20px; padding-bottom: 20px;
+    border-width: 1.5px; margin-top: 0;
+    opacity: 1;
+  }
+
+  .field-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: var(--orange-dark); margin-bottom: 4px; }
+  .field-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--blue); margin-bottom: 12px; }
+  .required { color: var(--danger); font-family: 'DM Sans', sans-serif; font-size: 14px; }
+
+  input[type="text"], input[type="tel"], textarea, select {
+    width: 100%; background: var(--white); border: 1.5px solid var(--border);
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px;
+    padding: 12px 16px; border-radius: 10px; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--blue-light); box-shadow: 0 0 0 3px rgba(0,86,210,0.1);
+  }
+  input::placeholder, textarea::placeholder { color: #B0C0D8; }
+  input.has-error, textarea.has-error, select.has-error { border-color: rgba(192,57,43,0.5); }
+
+  /* Select custom arrow */
+  select { appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 40px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231D6DDC' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+  select option { background: #fff; color: var(--text); }
+  select option[value=""] { color: #B0C0D8; }
+
+  textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+  .field-error { font-size: 12px; color: var(--danger); margin-top: 7px; display: none; }
+  .field-error.show { display: block; }
+
+  /* ── SUBMIT ── */
+  .submit-btn {
+    width: 100%; padding: 17px;
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue), var(--blue-light));
+    color: #fff; font-family: 'DM Sans', sans-serif; font-size: 15px;
+    font-weight: 700; letter-spacing: 0.3px; border: none; border-radius: 14px;
+    cursor: pointer; transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    margin-top: 8px; box-shadow: 0 6px 28px rgba(0,86,210,0.3);
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    animation: fadeDown 0.7s ease 0.24s both;
+  }
+  .submit-btn:hover:not(:disabled) { opacity: 0.92; transform: translateY(-2px); box-shadow: 0 10px 36px rgba(0,86,210,0.38); }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .submit-hint { text-align: center; font-size: 12.5px; color: var(--text-muted); margin-top: 12px; transition: color 0.3s; animation: fadeDown 0.7s ease 0.28s both; }
+
+  /* Spinner */
+  .spinner { width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--text); border-radius: 12px;
+    padding: 13px 22px; font-size: 14px; color: #fff;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 999; white-space: nowrap; max-width: 90vw; text-align: center;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { background: var(--danger); }
+
+  /* ── SUCCESS ── */
+  .success-screen {
+    display: none; text-align: center;
+    padding: 56px 20px; animation: fadeUp 0.6s ease both;
+  }
+  .success-icon { font-size: 64px; margin-bottom: 20px; display: block; animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.15s both; }
+  .success-title { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 900; color: var(--blue); margin-bottom: 10px; }
+  .success-title span { color: var(--orange); }
+  .success-sub { color: var(--text-muted); font-size: 14.5px; line-height: 1.65; margin-bottom: 28px; }
+
+  .success-detail {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 6px 24px;
+    margin: 0 auto 20px; max-width: 460px; text-align: left;
+  }
+  .success-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; gap: 12px; }
+  .success-row:last-child { border-bottom: none; }
+  .success-row-label { color: var(--text-muted); flex-shrink: 0; }
+  .success-row-val { color: var(--text); font-weight: 600; text-align: right; }
+  .success-row.highlight .success-row-val { color: var(--blue); }
+
+  .success-note {
+    background: var(--success-bg); border: 1.5px solid var(--success-border);
+    border-radius: 12px; padding: 14px 18px; font-size: 13.5px;
+    color: var(--success); max-width: 460px; margin: 0 auto; line-height: 1.6;
+  }
+
+  .new-entry-btn {
+    margin-top: 20px;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--surface); border: 1.5px solid var(--border);
+    color: var(--blue); font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px; font-weight: 600; padding: 11px 22px;
+    border-radius: 100px; cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  }
+  .new-entry-btn:hover { border-color: var(--blue-light); box-shadow: 0 4px 16px rgba(0,86,210,0.1); transform: translateY(-1px); }
+
+  /* ── FOOTER ── */
+  .footer-brand { text-align: center; margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--border); animation: fadeDown 0.7s ease 0.32s both; }
+  .footer-logo { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-muted); font-weight: 500; }
+  .footer-dot { width: 6px; height: 6px; background: var(--orange); border-radius: 50%; display: inline-block; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  @media (max-width: 480px) {
+    .container { padding: 24px 14px 60px; }
+    .form-card { padding: 16px 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ══ FORM VIEW ══ -->
+  <div id="formView">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-badge">&#128218; Buku Tamu Digital</div>
+      <h1>Selamat<br><span>Datang!</span></h1>
+      <p class="header-sub">Silakan isi buku tamu sebelum memulai kunjungan<br>ke Universitas Terbuka Bandung</p>
+      <div class="divider"></div>
+    </div>
+
+    <!-- Tanggal & Jam Realtime -->
+    <div class="date-banner">
+      <div class="date-icon">&#128197;</div>
+      <div>
+        <div class="date-label">Tanggal Kunjungan</div>
+        <div class="date-val" id="dateVal">—</div>
+        <div class="date-time" id="timeVal">—</div>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="info-card">
+      <span class="info-icon">&#128221;</span>
+      <div class="info-text">
+        Isi semua kolom dengan <strong>data yang valid</strong>. Data kunjungan akan tersimpan secara otomatis. Terima kasih atas kunjungan Anda! &#128591;
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="form-progress">
+      <div class="form-progress-header">
+        <span class="form-progress-label">Kelengkapan formulir</span>
+        <span class="form-progress-count" id="progressCount">0 / 3</span>
+      </div>
+      <div class="form-progress-bar">
+        <div class="form-progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <!-- Form Fields -->
+    <div class="form-section">
+
+      <!-- Nama -->
+      <div class="form-card" id="cardNama">
+        <div class="field-label">Identitas Tamu</div>
+        <div class="field-title">Nama Lengkap <span class="required">*</span></div>
+        <input type="text" id="inputNama" placeholder="Tulis nama lengkap Anda"
+          oninput="onInput('nama')"
+          onfocus="setFocused('cardNama')" onblur="clearFocused('cardNama')" />
+        <div class="field-error" id="errNama">Nama tidak boleh kosong</div>
+      </div>
+
+      <!-- No. Telepon -->
+      <div class="form-card" id="cardTelp">
+        <div class="field-label">Kontak</div>
+        <div class="field-title">Nomor Telepon <span class="required">*</span></div>
+        <input type="tel" id="inputTelp" placeholder="Contoh: 08123456789"
+          maxlength="15"
+          oninput="onTelpInput()"
+          onfocus="setFocused('cardTelp')" onblur="clearFocused('cardTelp')" />
+        <div class="field-error" id="errTelp">Masukkan nomor telepon yang valid (minimal 8 digit)</div>
+      </div>
+
+      <!-- Tujuan -->
+      <div class="form-card" id="cardTujuan">
+        <div class="field-label">Keperluan</div>
+        <div class="field-title">Tujuan Kunjungan <span class="required">*</span></div>
+        <select id="inputTujuan" onchange="onTujuanChange()" onfocus="setFocused('cardTujuan')" onblur="clearFocused('cardTujuan')">
+          <option value="">— Pilih tujuan kunjungan —</option>
+          <option value="Pendaftaran Mahasiswa Baru">&#127979; Pendaftaran Mahasiswa Baru</option>
+          <option value="Informasi UT">&#127979; Informasi UT</option>
+          <option value="Tamu Pimpinan">&#128084; Tamu Pimpinan</option>
+          <option value="Konsultasi Pembimbing Akademik">&#128084; Konsultasi Pembimbing Akademik</option>
+          <option value="Surat Keterangan">&#128084; Surat Keterangan</option>
+          <option value="Legalisir Ijazah">&#128084; Legalisir Ijazah</option>
+          <option value="Pengambilan Ijazah">&#128084; Pengambilan Ijazah</option>
+          <option value="Lainnya">&#128203; Lainnya</option>
+        </select>
+        <div class="field-error" id="errTujuan">Pilih tujuan kunjungan</div>
+      </div>
+
+      <!-- Detail (hanya muncul jika tujuan = Informasi) -->
+      <div class="form-card detail-card" id="cardDetail">
+        <div class="field-label">Keterangan Tambahan</div>
+        <div class="field-title">Detail Informasi yang Dibutuhkan <span class="required">*</span></div>
+        <textarea id="inputDetail" placeholder="Tuliskan detail kunjungan anda..."
+          oninput="onInput('detail')"
+          onfocus="setFocused('cardDetail')" onblur="clearFocused('cardDetail')"></textarea>
+        <div class="field-error" id="errDetail">Kolom detail tidak boleh kosong</div>
+      </div>
+
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitForm()" disabled>
+      <span class="spinner" id="spinner"></span>
+      <span id="submitLabel">Simpan &#128221;</span>
+    </button>
+    <p class="submit-hint" id="submitHint">Lengkapi semua isian untuk menyimpan kunjungan</p>
+
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <span class="footer-dot"></span>
+        Universitas Terbuka &#8212; UT Bandung
+        <span class="footer-dot"></span>
+      </div>
+    </div>
+  </div><!-- /formView -->
+
+  <!-- ══ SUCCESS VIEW ══ -->
+  <div id="successView" class="success-screen">
+    <span class="success-icon">&#10003;</span>
+    <div class="success-title">Kunjungan <span>Tercatat!</span></div>
+    <p class="success-sub">Terima kasih telah mengisi buku tamu.<br>Selamat datang di Universitas Terbuka Bandung! &#128591;</p>
+    <div class="success-detail" id="successDetail"></div>
+    <div class="success-note">
+      &#128276;&nbsp; Data kunjungan Anda telah tersimpan. Silakan menuju loket sesuai keperluan Anda.
+    </div>
+    <!-- <button class="new-entry-btn" onclick="resetForm()">
+      &#43; Tamu Berikutnya
+    </button> -->
+  </div>
+
+</div><!-- /container -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* <![CDATA[ */
+// ============================================================
+// KONFIGURASI
+// ============================================================
+var SHEET_URL = "https://script.google.com/macros/s/AKfycbyaEFqvUNLJ51hTAjXR3DjWPfYT3fZ1SaMUTRTLuLe9Wbt2Bw3npsl9EIPhyUGbG4mW/exec";
+
+// ============================================================
+// STATE
+// ============================================================
+var isSubmitting   = false;
+var tujuanVal      = "";
+var showDetail     = false;
+
+// ============================================================
+// REALTIME DATE & TIME
+// ============================================================
+function updateDateTime() {
+  var now  = new Date();
+  var days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+  var months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+
+  var dateStr = days[now.getDay()] + ", " + now.getDate() + " " + months[now.getMonth()] + " " + now.getFullYear();
+  var hh = String(now.getHours()).padStart(2,"0");
+  var mm = String(now.getMinutes()).padStart(2,"0");
+  var ss = String(now.getSeconds()).padStart(2,"0");
+  var timeStr = hh + ":" + mm + ":" + ss + " WIB";
+
+  document.getElementById("dateVal").textContent = dateStr;
+  document.getElementById("timeVal").textContent = timeStr;
+}
+updateDateTime();
+setInterval(updateDateTime, 1000);
+
+// ============================================================
+// CARD FOCUS
+// ============================================================
+function setFocused(id) { document.getElementById(id).classList.add("focused"); }
+function clearFocused(id) { setTimeout(function() { document.getElementById(id).classList.remove("focused"); }, 150); }
+
+// ============================================================
+// INPUT HANDLERS
+// ============================================================
+function onInput(field) {
+  var cardId = "card" + field.charAt(0).toUpperCase() + field.slice(1);
+  var inputId = "input" + field.charAt(0).toUpperCase() + field.slice(1);
+  var errId = "err" + field.charAt(0).toUpperCase() + field.slice(1);
+  var val = document.getElementById(inputId).value.trim();
+
+  if (val.length > 0) {
+    document.getElementById(cardId).classList.add("filled");
+    document.getElementById(cardId).classList.remove("error");
+    document.getElementById(errId).classList.remove("show");
+    document.getElementById(inputId).classList.remove("has-error");
+  } else {
+    document.getElementById(cardId).classList.remove("filled");
+  }
+  updateProgress();
+  updateSubmitBtn();
+}
+
+function onTelpInput() {
+  var el = document.getElementById("inputTelp");
+  // Hanya izinkan angka
+  el.value = el.value.replace(/[^0-9]/g, "");
+  onInput("telp");
+}
+
+function onTujuanChange() {
+  tujuanVal = document.getElementById("inputTujuan").value;
+  var card  = document.getElementById("cardTujuan");
+  var err   = document.getElementById("errTujuan");
+
+  if (tujuanVal) {
+    card.classList.add("filled"); card.classList.remove("error");
+    err.classList.remove("show");
+    document.getElementById("inputTujuan").classList.remove("has-error");
+  } else {
+    card.classList.remove("filled");
+  }
+
+  // Tampilkan / sembunyikan field Detail
+  showDetail = (tujuanVal === "Lainnya");
+  var detailCard = document.getElementById("cardDetail");
+  if (showDetail) {
+    detailCard.classList.add("visible");
+  } else {
+    detailCard.classList.remove("visible");
+    // Reset dan bersihkan error detail jika disembunyikan
+    document.getElementById("inputDetail").value = "";
+    document.getElementById("cardDetail").classList.remove("error","filled");
+    document.getElementById("errDetail").classList.remove("show");
+    document.getElementById("inputDetail").classList.remove("has-error");
+  }
+
+  updateProgress();
+  updateSubmitBtn();
+}
+
+// ============================================================
+// VALIDASI
+// ============================================================
+function validateAll(showErr) {
+  var ok = true;
+
+  // Nama
+  var nama = document.getElementById("inputNama").value.trim();
+  if (!nama) {
+    ok = false;
+    if (showErr) {
+      document.getElementById("cardNama").classList.add("error");
+      document.getElementById("errNama").classList.add("show");
+      document.getElementById("inputNama").classList.add("has-error");
+    }
+  }
+
+  // Telepon
+  var telp = document.getElementById("inputTelp").value.trim();
+  if (telp.length < 8) {
+    ok = false;
+    if (showErr) {
+      document.getElementById("cardTelp").classList.add("error");
+      document.getElementById("errTelp").classList.add("show");
+      document.getElementById("inputTelp").classList.add("has-error");
+    }
+  }
+
+  // Tujuan
+  if (!tujuanVal) {
+    ok = false;
+    if (showErr) {
+      document.getElementById("cardTujuan").classList.add("error");
+      document.getElementById("errTujuan").classList.add("show");
+      document.getElementById("inputTujuan").classList.add("has-error");
+    }
+  }
+
+  // Detail (hanya jika tujuan = Informasi)
+  if (showDetail) {
+    var detail = document.getElementById("inputDetail").value.trim();
+    if (!detail) {
+      ok = false;
+      if (showErr) {
+        document.getElementById("cardDetail").classList.add("error");
+        document.getElementById("errDetail").classList.add("show");
+        document.getElementById("inputDetail").classList.add("has-error");
+      }
+    }
+  }
+
+  return ok;
+}
+
+// ============================================================
+// PROGRESS
+// ============================================================
+function countFilled() {
+  var n = 0;
+  var nama = document.getElementById("inputNama").value.trim();
+  var telp = document.getElementById("inputTelp").value.trim();
+  var detail = document.getElementById("inputDetail").value.trim();
+
+  if (nama.length > 0) n++;
+  if (telp.length >= 8) n++;
+  if (tujuanVal) n++;
+  if (showDetail && detail.length > 0) n++;
+
+  return n;
+}
+
+function totalFields() {
+  return showDetail ? 4 : 3;
+}
+
+function updateProgress() {
+  var n   = countFilled();
+  var tot = totalFields();
+  document.getElementById("progressCount").textContent = n + " / " + tot;
+  document.getElementById("progressFill").style.width  = (tot > 0 ? (n / tot * 100) : 0) + "%";
+}
+
+function updateSubmitBtn() {
+  var ok   = countFilled() === totalFields();
+  var btn  = document.getElementById("submitBtn");
+  var hint = document.getElementById("submitHint");
+  btn.disabled = !ok;
+  if (ok) {
+    hint.textContent = "Data lengkap. Siap menyimpan kunjungan!";
+    hint.style.color = "#1A7F4B";
+  } else {
+    var rem = totalFields() - countFilled();
+    hint.textContent = "Lengkapi " + rem + " isian lagi untuk menyimpan";
+    hint.style.color = "var(--text-muted)";
+  }
+}
+
+// ============================================================
+// SUBMIT
+// ============================================================
+function submitForm() {
+  if (isSubmitting) return;
+
+  if (!validateAll(true)) {
+    showToast("Periksa kembali isian yang belum lengkap", true);
+    return;
+  }
+
+  // Kunci tombol SEKARANG — cegah double submit
+  isSubmitting = true;
+  document.getElementById("submitBtn").disabled      = true;
+  document.getElementById("spinner").style.display   = "block";
+  document.getElementById("submitLabel").textContent  = "Menyimpan...";
+
+  var now = new Date();
+  var timestamp = now.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+
+  var nama   = document.getElementById("inputNama").value.trim();
+  var telp   = document.getElementById("inputTelp").value.trim();
+  var detail = showDetail ? document.getElementById("inputDetail").value.trim() : "-";
+
+  var payload = {
+    timestamp: timestamp,
+    nama:      nama,
+    telp:      telp,
+    tujuan:    tujuanVal,
+    detail:    detail
+  };
+
+  var formData = new URLSearchParams(payload);
+
+  fetch(SHEET_URL, {
+    method: "POST",
+    body:   formData
+  })
+  .then(function(res) {
+    if (!res.ok) { throw new Error("HTTP " + res.status); }
+    return res.text();
+  })
+  .then(function(text) {
+    var data;
+    try { data = JSON.parse(text); } catch(e) { throw new Error("Response tidak valid"); }
+    if (data.status === "ok") {
+      showSuccess(payload);
+    } else {
+      throw new Error(data.message || "Gagal menyimpan");
+    }
+  })
+  .catch(function(err) {
+    console.error(err);
+    showToast("Gagal menyimpan. Periksa koneksi dan coba lagi.", true);
+    resetSubmitBtn();
+  });
+}
+
+// ============================================================
+// SUCCESS
+// ============================================================
+function showSuccess(p) {
+  var rows = [
+    { label: "Tanggal", val: p.timestamp },
+    { label: "Nama",    val: p.nama, hl: true },
+    { label: "Telepon", val: p.telp },
+    { label: "Tujuan",  val: p.tujuan, hl: true }
+  ];
+  if (showDetail && p.detail !== "-") {
+    rows.push({ label: "Detail", val: p.detail });
+  }
+
+  document.getElementById("successDetail").innerHTML = rows.map(function(r) {
+    return '<div class="success-row' + (r.hl ? " highlight" : "") + '">' +
+      '<span class="success-row-label">' + r.label + '</span>' +
+      '<span class="success-row-val">'   + r.val   + '</span></div>';
+  }).join("");
+
+  document.getElementById("formView").style.display    = "none";
+  document.getElementById("successView").style.display = "block";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ============================================================
+// RESET — untuk tamu berikutnya
+// ============================================================
+// function resetForm() {
+//   // Reset state
+//   isSubmitting = false;
+//   tujuanVal    = "";
+//   showDetail   = false;
+
+//   // Reset semua input
+//   document.getElementById("inputNama").value   = "";
+//   document.getElementById("inputTelp").value   = "";
+//   document.getElementById("inputTujuan").value = "";
+//   document.getElementById("inputDetail").value = "";
+
+//   // Reset semua card
+//   ["cardNama","cardTelp","cardTujuan","cardDetail"].forEach(function(id) {
+//     document.getElementById(id).classList.remove("filled","error","focused");
+//   });
+
+//   // Reset semua error
+//   ["errNama","errTelp","errTujuan","errDetail"].forEach(function(id) {
+//     document.getElementById(id).classList.remove("show");
+//   });
+//   ["inputNama","inputTelp","inputTujuan","inputDetail"].forEach(function(id) {
+//     document.getElementById(id).classList.remove("has-error");
+//   });
+
+//   // Sembunyikan detail card
+//   document.getElementById("cardDetail").classList.remove("visible");
+
+//   // Reset submit btn
+//   resetSubmitBtn();
+
+//   // Switch view
+//   document.getElementById("successView").style.display = "none";
+//   document.getElementById("formView").style.display    = "block";
+//   window.scrollTo({ top: 0, behavior: "smooth" });
+// }
+
+// ============================================================
+// HELPERS
+// ============================================================
+function resetSubmitBtn() {
+  isSubmitting = false;
+  document.getElementById("spinner").style.display   = "none";
+  document.getElementById("submitLabel").textContent  = "Simpan Kunjungan \uD83D\uDCDD";
+  updateProgress();
+  updateSubmitBtn();
+}
+
+function showToast(msg, isError) {
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast show" + (isError ? " error" : "");
+  setTimeout(function() { t.className = "toast" + (isError ? " error" : ""); }, 4000);
+}
+
+// ============================================================
+// EXPOSE KE WINDOW (untuk WordPress)
+// ============================================================
+window.onTelpInput    = onTelpInput;
+window.onInput        = onInput;
+window.onTujuanChange = onTujuanChange;
+window.setFocused     = setFocused;
+window.clearFocused   = clearFocused;
+window.submitForm     = submitForm;
+window.resetForm      = resetForm;
+
+// Init
+updateProgress();
+updateSubmitBtn();
+/* ]]> */
+</script>
+</body>
+</html>

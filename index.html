@@ -378,9 +378,9 @@
     <div class="success-note">
       &#128276;&nbsp; Data kunjungan Anda telah tersimpan. Silakan menuju loket sesuai keperluan Anda.
     </div>
-    <!-- <button class="new-entry-btn" onclick="resetForm()">
-      &#43; Tamu Berikutnya
-    </button> -->
+    <button class="new-entry-btn" onclick="resetForm()">
+      &#43; Kembali ke halaman utama
+    </button>
   </div>
 
 </div><!-- /container -->
@@ -668,42 +668,42 @@ function showSuccess(p) {
 // ============================================================
 // RESET — untuk tamu berikutnya
 // ============================================================
-// function resetForm() {
-//   // Reset state
-//   isSubmitting = false;
-//   tujuanVal    = "";
-//   showDetail   = false;
+function resetForm() {
+  // Reset state
+  isSubmitting = false;
+  tujuanVal    = "";
+  showDetail   = false;
 
-//   // Reset semua input
-//   document.getElementById("inputNama").value   = "";
-//   document.getElementById("inputTelp").value   = "";
-//   document.getElementById("inputTujuan").value = "";
-//   document.getElementById("inputDetail").value = "";
+  // Reset semua input
+  document.getElementById("inputNama").value   = "";
+  document.getElementById("inputTelp").value   = "";
+  document.getElementById("inputTujuan").value = "";
+  document.getElementById("inputDetail").value = "";
 
-//   // Reset semua card
-//   ["cardNama","cardTelp","cardTujuan","cardDetail"].forEach(function(id) {
-//     document.getElementById(id).classList.remove("filled","error","focused");
-//   });
+  // Reset semua card
+  ["cardNama","cardTelp","cardTujuan","cardDetail"].forEach(function(id) {
+    document.getElementById(id).classList.remove("filled","error","focused");
+  });
 
-//   // Reset semua error
-//   ["errNama","errTelp","errTujuan","errDetail"].forEach(function(id) {
-//     document.getElementById(id).classList.remove("show");
-//   });
-//   ["inputNama","inputTelp","inputTujuan","inputDetail"].forEach(function(id) {
-//     document.getElementById(id).classList.remove("has-error");
-//   });
+  // Reset semua error
+  ["errNama","errTelp","errTujuan","errDetail"].forEach(function(id) {
+    document.getElementById(id).classList.remove("show");
+  });
+  ["inputNama","inputTelp","inputTujuan","inputDetail"].forEach(function(id) {
+    document.getElementById(id).classList.remove("has-error");
+  });
 
-//   // Sembunyikan detail card
-//   document.getElementById("cardDetail").classList.remove("visible");
+  // Sembunyikan detail card
+  document.getElementById("cardDetail").classList.remove("visible");
 
-//   // Reset submit btn
-//   resetSubmitBtn();
+  // Reset submit btn
+  resetSubmitBtn();
 
-//   // Switch view
-//   document.getElementById("successView").style.display = "none";
-//   document.getElementById("formView").style.display    = "block";
-//   window.scrollTo({ top: 0, behavior: "smooth" });
-// }
+  // Switch view
+  document.getElementById("successView").style.display = "none";
+  document.getElementById("formView").style.display    = "block";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
 // ============================================================
 // HELPERS

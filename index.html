@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Buku Tamu — UT Bandung</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="shortcut icon" href="img/logo-ut.png" type="image/x-icon">
 <style>
   :root {
     --blue:        #0056D2;
@@ -230,6 +231,18 @@
     color: var(--success); max-width: 460px; margin: 0 auto; line-height: 1.6;
   }
 
+  /* Logo UT Bandung di success view */
+  .success-logo-wrap {
+    display: flex; align-items: center; justify-content: center;
+    animation: pop 0.5s cubic-bezier(0.175 , 0.885, 0.32, 1.275) 0.15s both;
+  }
+
+  .success-logo-img {
+    height: 150px; width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 16px rgba(0,86,210,0.15));
+  }
+
   .new-entry-btn {
     margin-top: 20px;
     display: inline-flex; align-items: center; gap: 8px;
@@ -243,8 +256,18 @@
 
   /* ── FOOTER ── */
   .footer-brand { text-align: center; margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--border); animation: fadeDown 0.7s ease 0.32s both; }
+
+  /* Logo UT Bandung */
+  .footer-logo-img {
+    display: block; margin: 0 auto 10px;
+    height: 150px; width: auto;
+    object-fit: contain;
+  }
+
   .footer-logo { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-muted); font-weight: 500; }
   .footer-dot { width: 6px; height: 6px; background: var(--orange); border-radius: 50%; display: inline-block; }
+
+  
 
   /* ── ANIMATIONS ── */
   @keyframes fadeDown { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: translateY(0); } }
@@ -362,6 +385,7 @@
     <p class="submit-hint" id="submitHint">Lengkapi semua isian untuk menyimpan kunjungan</p>
 
     <div class="footer-brand">
+      <img src="img/logo-utbdg.png" alt="logo-ut-bandung" class="footer-logo-img" />
       <div class="footer-logo">
         <span class="footer-dot"></span>
         Universitas Terbuka &#8212; UT Bandung
@@ -372,7 +396,9 @@
 
   <!-- ══ SUCCESS VIEW ══ -->
   <div id="successView" class="success-screen">
-    <span class="success-icon">&#10003;</span>
+    <div class="success-logo-wrap">
+      <img src="img/logo-utbdg.png" alt="Logo UT Bandung" class="success-logo-img">
+    </div>
     <div class="success-title">Kunjungan <span>Tercatat!</span></div>
     <p class="success-sub">Terima kasih telah mengisi buku tamu.<br>Selamat datang di Universitas Terbuka Bandung! &#128591;</p>
     <div class="success-detail" id="successDetail"></div>
